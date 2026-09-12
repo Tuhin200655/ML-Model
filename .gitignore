@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv
+venv/
+ENV/
+env/
+
+# Model Artifacts
+# We usually don't push large binary model files to GitHub
+model_artifacts/*.joblib
+
+# Data
+# If the datasets are large, they should be ignored.
+# For this project, we keep the base data but ignore generated files.
+Data/*.csv
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
