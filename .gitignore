@@ -7,6 +7,9 @@ venv/
 ENV/
 env/
 
+# Claude Code
+.claude/
+
 # Model Artifacts
 # We usually don't push large binary model files to GitHub
 model_artifacts/*.joblib
