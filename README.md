@@ -1,85 +1,77 @@
-# 🧠 Condition Detection ML System
+# 🧠 AI-Based Real-Time Stress and Trauma Assessment Module (NHAA-14566)
 
-A high-sensitivity machine learning pipeline designed to detect specific emotional or psychological conditions from text and linguistic features. This system combines semantic embeddings, linguistic analysis, and a safety-first "Red Flag" override system to ensure high recall for high-risk signals.
+An advanced, multimodal AI system developed for the **National Helpline Against Atrocities (NHAA - 14566)** and the Integrated Portal of the **Ministry of Social Justice and Empowerment (MoSJE)**. This module is designed to assess the psychological stress, trauma, and vulnerability levels of victims/complainants in real-time.
 
-## 🚀 Key Features
+## 🎯 Problem Statement Alignment
+The system addresses the need for a standardized mechanism to assess psychological conditions of victims interacting via digital platforms (Helplines, Chatbots, Mobile Apps, IVRS). It focuses on identifying signs of trauma, fear, anxiety, and extreme vulnerability to prioritize critical support.
 
-- **Semantic Understanding**: Uses `Sentence-BERT (all-MiniLM-L6-v2)` to understand the meaning of phrases, solving the "Out-of-Vocabulary" (OOV) problem.
-- **Linguistic Fusion**: Integrates dense linguistic features (LIWC, DAL) with text embeddings for a holistic analysis.
-- **Sentiment Guardrails**: Integrates `vaderSentiment` to adjust predictions based on emotional polarity.
-- **Red Flag System**: A JSON-based override system that forces a "Condition Detected" result for critical high-severity keywords.
-- **Context-Aware Filtering**: Implements "Recovery Anchors" to prevent False Positives in stories about healing and survival.
-- **Multi-Interface Access**: Available via CLI, a REST API (FastAPI), and a visual Dashboard (Streamlit).
+## 🚀 Core Capabilities
+
+- **Multimodal Analysis**: Integrates textual narratives with acoustic speech patterns.
+- **Stress Vulnerability Index (SVI)**: A scientific scoring mechanism (0.0 - 1.0) that quantifies the level of distress.
+- **Emotion AI**: Utilizes VADER sentiment polarity and SBERT semantic embeddings to detect hidden trauma.
+- **Acoustic Analytics**: Analyzes pitch variation, pause durations, and energy levels to identify physiological signs of stress.
+- **Automated Recommendations**: Maps risk levels to specific institutional actions (Legal Aid, Police Intervention, etc.).
+- **Safety Guardrails**: Implements a specialized "Red Flag" system for atrocity-specific markers and "Recovery Anchors" to prevent false positives in healing narratives.
 
 ## 🛠️ Technical Architecture
 
-1. **Input**: Raw text $\rightarrow$ Preprocessing.
-2. **Vectorization**: 
-   - Text $\rightarrow$ SBERT Embeddings (384-dim).
-   - Text $\rightarrow$ LIWC/DAL Linguistic Features + VADER Sentiment.
-3. **Fusion**: Dense concatenation of semantic and linguistic vectors.
-4. **Classification**: Tuned `RandomForestClassifier` with balanced class weights.
-5. **Override Layer**: Red Flag checks $\rightarrow$ Recovery Anchor filtering.
-6. **Output**: Prediction (0/1), Probability, and Trigger Label.
+### 1. SVI Calculation Formula
+The system calculates the **Stress Vulnerability Index (SVI)** using a weighted fusion of four signals:
+$$\text{SVI} = (\text{ML Probability} \times 0.4) + (\text{Sentiment Negativity} \times 0.1) + (\text{Red Flags} \times 0.2) + (\text{Audio Stress} \times 0.3)$$
+
+### 2. Risk Categorization
+The SVI is mapped to one of four risk categories:
+- **Low (0.0 - 0.3)** $\rightarrow$ Standard Support & Resource Guides.
+- **Moderate (0.3 - 0.5)** $\rightarrow$ Prioritized Counselling.
+- **High (0.5 - 0.8)** $\rightarrow$ Urgent Legal Aid & Medical Assistance.
+- **Critical (0.8 - 1.0)** $\rightarrow$ Immediate Police Intervention & Witness Protection.
+
+### 3. Feature Stack
+- **Text**: `Sentence-BERT (all-MiniLM-L6-v2)` for semantic trauma detection.
+- **Audio**: `Librosa` for F0 Pitch, RMS Energy, and Silence/Pause Ratio.
+- **Sentiment**: `vaderSentiment` for emotional valence.
+- **Linguistic**: LIWC/DAL based feature fusion.
 
 ## 📂 Project Structure
 
 ```text
 .
-├── Data/                   # Training, Validation, and Test CSVs
-├── model_artifacts/        # Saved model, scaler, and means
-├── red_flags.json          # Configuration for high-severity keywords
-├── train.py                # Full training and tuning pipeline
-├── predict.py               # Core inference engine
-├── server.py               # FastAPI REST server
-├── app.py                  # Streamlit Visual Dashboard
-├── evaluate_system.py      # Accuracy and F1-Score evaluator
-└── analyze_errors.py        # FP/FN analysis tool
+├── Data/                   # Training and Test datasets
+├── model_artifacts/        # Saved model, scaler, and neutral means
+├── red_flags.json          # Atrocity-specific high-severity keywords
+├── train.py                # Training pipeline with data augmentation
+├── predict.py               # Core Multimodal Assessment Engine
+├── audio_processor.py       # Acoustic stress feature extraction
+├── recommendation_engine.py # Risk-to-Action mapping logic
+├── server.py               # FastAPI REST server for portal integration
+├── app.py                  # Streamlit Visual Dashboard for operators
+└── evaluate_system.py      # System performance and accuracy evaluator
 ```
 
-## ⚙️ Installation
+## ⚙️ Setup & Execution
 
 ```bash
-# Install dependencies
-pip install pandas numpy sentence-transformers scikit-learn joblib vaderSentiment fastapi uvicorn streamlit
-```
+# 1. Install dependencies
+pip install pandas numpy sentence-transformers scikit-learn joblib vaderSentiment fastapi uvicorn streamlit librosa soundfile
 
-## 🏃 How to Use
-
-### 1. Train the Model
-Generate the model and save artifacts to the `model_artifacts/` folder.
-```bash
+# 2. Train the model
 py train.py
-```
 
-### 2. Run the Visual Dashboard (Recommended)
-Launch the interactive web interface.
-```bash
+# 3. Launch the visual assessment dashboard
 py -m streamlit run app.py
-```
 
-### 3. Run the REST API
-Start the server to allow other applications to send requests.
-```bash
+# 4. Start the API server for portal integration
 py server.py
 ```
-*API Endpoint: `POST http://127.0.0.1:8000/predict`*
 
-### 4. Evaluate Performance
-Run a full evaluation on the test dataset.
-```bash
-py evaluate_system.py
-```
+## 📈 Evaluation Results
+The system is tuned for **High Recall** to ensure no critical victim is overlooked.
+- **Recall (Condition Detection)**: ~87%
+- **Overall Accuracy**: ~74%
+- **F1-Score**: ~77%
 
-## 📈 Final Performance Metrics
-
-| Metric | Value |
-| :--- | :--- |
-| **Accuracy** | ~74% |
-| **F1-Score** | ~77% |
-| **Recall (Condition)** | **~87%** |
-
-*Note: The system is intentionally tuned for high recall to minimize the risk of missing critical distress signals.*
-
-## 🛡️ Safety & Configuration
-You can update the critical keyword list in `red_flags.json`. Any text containing these words will be flagged as "Condition Detected" regardless of the ML probability, unless the "Recovery Anchors" in `predict.py` detect a healing context.
+## 🛡️ Ethics & Privacy
+- **Anonymization**: Designed to be integrated with PII scrubbing modules.
+- **Informed Consent**: Dashboard includes prompts for victim consent.
+- **Clinical Support**: The tool is a support system for professionals, not a replacement for clinical diagnosis.
