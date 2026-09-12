@@ -52,7 +52,10 @@ def main():
 
     print("\nConfusion Matrix:\n")
     print(confusion_matrix(y_true, y_pred))
-    print("\n==========================================")
+    print("\n==========================================")7
 
 if __name__ == "__main__":
     main()
+
+
+
